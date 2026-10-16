@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>生辰八字测姻缘 · 你的未来伴侣</title>
+<meta name="description" content="输入生辰八字+10道小题，推算你的未来伴侣画像与桃花时间线。仅供娱乐。">
+<style>
+:root{--red:#8E1B2B;--red2:#B8324A;--gold:#C9966B;--gold2:#E8C4A0;--cream:#FBF4EA;--ink:#4A2028;--muted:#8C6A66;--serif:"Noto Serif SC","Noto Serif CJK SC","Songti SC","STSong",serif;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:#F3E6D8;color:var(--ink);font-family:var(--sans)}
+#app{max-width:430px;margin:0 auto;min-height:100vh;position:relative;overflow-x:hidden;background:var(--cream) radial-gradient(circle at 50% -10%,#F6DCD0 0,transparent 60%)}
+.scr{display:none;min-height:100vh;padding:24px 20px 40px;position:relative}
+.scr.on{display:block;animation:fi .4s}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+.cloud{position:absolute;opacity:.18;pointer-events:none}
+h1{font-family:var(--serif);color:var(--red);text-align:center;font-size:30px;letter-spacing:2px;line-height:1.35;margin-top:10px}
+.sub{text-align:center;color:var(--muted);font-size:14px;margin-top:8px;font-family:var(--serif)}
+.pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px 0}
+.pill{border:1px solid var(--gold);color:var(--red);border-radius:20px;padding:4px 12px;font-size:12px;background:#FFF9F2}
+.btn{display:block;width:100%;border:0;border-radius:28px;padding:15px;font-size:17px;font-weight:600;color:#FFF6EC;background:linear-gradient(135deg,var(--red2),var(--red));box-shadow:0 6px 18px rgba(142,27,43,.28);font-family:var(--serif);letter-spacing:3px;cursor:pointer}
+.btn.ghost{background:#FFF9F2;color:var(--red);border:1px solid var(--gold);box-shadow:none;letter-spacing:1px;font-size:15px;padding:12px}
+.disc{font-size:11px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+.card{background:#FFFBF5;border:1px solid #EBD3BC;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 14px rgba(142,27,43,.06);position:relative}
+.st{font-family:var(--serif);color:var(--red);font-size:16px;font-weight:700;margin-bottom:12px}
+.st b{color:var(--gold)}
+label.l{display:block;font-size:14px;color:var(--ink);margin:14px 0 8px;font-weight:600}
+input[type=text],select{width:100%;padding:11px 12px;border:1px solid #E2C7AE;border-radius:12px;background:#FFF;font-size:15px;color:var(--ink);font-family:var(--sans);appearance:none}
+.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{flex:1;min-width:0;padding:10px 4px;border:1px solid #E2C7AE;background:#FFF;border-radius:12px;font-size:14px;color:var(--ink);cursor:pointer;font-family:var(--sans)}
+.seg button.on{background:var(--red);color:#FFF6EC;border-color:var(--red)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.grid4 button{padding:8px 2px;border:1px solid #E2C7AE;background:#FFF;border-radius:10px;font-size:13px;color:var(--ink);line-height:1.3;cursor:pointer}
+.grid4 button small{display:block;font-size:10px;color:var(--muted)}
+.grid4 button.on{background:var(--red);color:#FFF6EC;border-color:var(--red)}.grid4 button.on small{color:#F3D6C0}
+.prog{height:6px;background:#EED9C6;border-radius:3px;overflow:hidden;margin:10px 0 22px}.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--red2));transition:width .3s}
+.qtop{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+.qtop button{background:none;border:0;color:var(--muted);font-size:13px;cursor:pointer}
+.qt{font-family:var(--serif);font-size:20px;line-height:1.5;color:var(--ink);margin-bottom:20px;min-height:60px}
+.opt{display:block;width:100%;text-align:left;padding:14px 16px;margin-bottom:11px;border:1px solid #E6CDB6;background:#FFFBF5;border-radius:14px;font-size:15px;color:var(--ink);line-height:1.5;cursor:pointer;font-family:var(--sans)}
+.opt:active,.opt.on{background:#F8E1DA;border-color:var(--red2)}
+.load{text-align:center;padding-top:22vh}
+.pan{width:150px;height:150px;margin:0 auto 26px;animation:sp 3s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.lt{font-family:var(--serif);color:var(--red);font-size:18px;letter-spacing:2px}
+/* results */
+.rh{text-align:center;margin-bottom:10px}.rh .t{font-family:var(--serif);color:var(--red);font-size:20px}.rh .s{font-size:12px;color:var(--muted);margin-top:4px}
+#wrap{overflow:hidden;touch-action:pan-y}
+#slides{display:flex;transition:transform .35s ease}
+.slide{flex:0 0 100%;min-width:0;padding:0 2px}
+.nav{display:flex;justify-content:center;align-items:center;gap:8px;margin:6px 0 12px}
+.dot{width:7px;height:7px;border-radius:50%;background:#E3C7B0;cursor:pointer}.dot.on{background:var(--red);width:18px;border-radius:4px}
+.ind{text-align:center;font-size:12px;color:var(--muted);margin-bottom:6px}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
+.pc{background:linear-gradient(180deg,#FFF6EE,#F8E4D6);border:1px solid #E8C9AE;border-radius:12px;padding:8px 0}
+.pc .h{font-size:11px;color:var(--muted)}
+.pc .g{font-family:var(--serif);font-size:28px;line-height:1.25;font-weight:700}
+.pc.day{border-color:var(--red2);box-shadow:0 0 0 1px var(--red2) inset}
+.e木{color:#3F8F5A}.e火{color:#C8323C}.e土{color:#A9773A}.e金{color:#B08A2E}.e水{color:#2E6A9E}
+.bar{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:14px}
+.bar .n{width:22px;font-family:var(--serif);font-weight:700}
+.bar .tr{flex:1;height:12px;background:#F2E2D4;border-radius:6px;overflow:hidden}
+.bar .f{height:100%;border-radius:6px;width:0;transition:width .8s}
+.bar .c{width:20px;text-align:right;color:var(--muted)}
+.p{font-size:14px;line-height:1.8;color:#5E3A3E}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tag{background:#F8E1DA;color:var(--red);border-radius:12px;padding:3px 10px;font-size:12px}
+.kv{font-size:14px;line-height:1.7;margin:8px 0;color:#5E3A3E}.kv b{color:var(--red);font-family:var(--serif);margin-right:4px}
+.por{width:170px;height:170px;margin:0 auto 6px}
+.tl{position:relative;padding-left:22px}.tl:before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:linear-gradient(var(--red2),var(--gold2))}
+.ti{position:relative;margin-bottom:14px}.ti:before{content:"";position:absolute;left:-21px;top:5px;width:12px;height:12px;border-radius:50%;background:#FFF;border:2px solid var(--red2)}
+.ti .y{font-family:var(--serif);color:var(--red);font-weight:700;font-size:16px}.ti .d{font-size:13px;color:#6E4A4C;line-height:1.6}
+.stars{color:var(--red2);letter-spacing:2px}
+.quote{font-family:var(--serif);font-size:19px;color:var(--red);text-align:center;line-height:1.8;padding:18px 6px}
+.acts{display:flex;gap:10px;margin-top:4px}.acts .btn{font-size:15px;padding:12px;letter-spacing:1px}
+.mask{position:fixed;inset:0;background:rgba(40,10,15,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.mask.show{display:flex}
+.modal{background:var(--cream);border-radius:20px;padding:24px 20px;width:100%;max-width:360px;position:relative;border:1px solid var(--gold2)}
+.modal h3{font-family:var(--serif);color:var(--red);text-align:center;font-size:19px;margin-bottom:8px}
+.modal .x{position:absolute;right:14px;top:10px;background:none;border:0;font-size:22px;color:var(--muted);cursor:pointer}
+.modal input{text-align:center;letter-spacing:6px;font-size:20px;text-transform:uppercase;margin:14px 0}
+#ov .modal{max-height:90vh;overflow:auto;text-align:center}#shareImg{width:100%;border-radius:10px;margin:8px 0}
+#toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);background:rgba(50,15,20,.85);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:99;max-width:80%;text-align:center}
+#toast.show{opacity:1}
+.redline{display:block;margin:6px auto 0}
+</style></head><body><div id="app">
+<svg width="0" height="0" style="position:absolute"><defs><symbol id="cl" viewBox="0 0 120 50"><path d="M10 40c-8 0-8-12 2-12 0-10 14-12 18-4 4-12 24-12 26 2 10-6 22 2 16 12 10 0 10 12 0 12H10z" fill="none" stroke="#B8324A" stroke-width="2.5"/><path d="M30 34c4-6 12-6 14 0M64 34c4-5 10-5 12 0" fill="none" stroke="#B8324A" stroke-width="2"/></symbol></defs></svg>
+
+<section class="scr on" id="start">
+ <svg class="cloud" style="left:-20px;top:30px" width="130" height="54"><use href="#cl"/></svg>
+ <svg class="cloud" style="right:-24px;top:150px" width="110" height="46"><use href="#cl"/></svg>
+ <div style="height:40px"></div>
+ <div style="text-align:center;font-family:var(--serif);color:var(--gold);letter-spacing:6px;font-size:13px">— 月老红线 · 姻缘簿 —</div>
+ <h1>生辰八字测姻缘<br><span style="font-size:22px">你的未来伴侣</span></h1>
+ <p class="sub">四柱排盘 · 五行互补 · 桃花流年</p>
+ <div id="startArt" style="width:220px;height:220px;margin:18px auto 0"></div>
+ <div class="pills"><span class="pill">八字+10题 · 3分钟</span><span class="pill">伴侣画像</span><span class="pill">桃花时间线</span></div>
+ <button class="btn" id="btnStart">开始测算</button>
+ <p class="disc">本测试基于传统命理文化的趣味解读<br>仅供娱乐，不作为任何决策依据</p>
+</section>
+
+<section class="scr" id="input">
+ <div class="st" style="text-align:center;font-size:20px;margin-top:6px">写下你的生辰</div>
+ <p class="sub" style="margin-top:0">信息仅在本机计算，不会上传</p>
+ <div class="card" style="margin-top:14px">
+  <label class="l">昵称（选填）</label><input type="text" id="nick" maxlength="10" placeholder="例如：小满">
+  <label class="l">性别</label><div class="seg" id="sexSeg"><button data-v="f" class="on">女</button><button data-v="m">男</button></div>
+  <label class="l">公历出生日期</label><div class="row"><select id="yy"></select><select id="mm"></select><select id="dd"></select></div>
+  <label class="l">出生时辰</label><div class="grid4" id="hourGrid"></div>
+  <label class="l">喜欢的对象（选填）</label><div class="seg" id="likeSeg"><button data-v="auto" class="on">默认</button><button data-v="m">男生</button><button data-v="f">女生</button></div>
+ </div>
+ <button class="btn" id="btnInput">下一步 · 回答小问题</button>
+ <p class="disc">仅供娱乐，不作为任何决策依据</p>
+</section>
+
+<section class="scr" id="quiz">
+ <div class="qtop"><button id="qback">‹ 上一题</button><span id="qn"></span></div>
+ <div class="prog"><i id="qp"></i></div>
+ <div class="qt" id="qt"></div><div id="qo"></div>
+</section>
+
+<section class="scr" id="loading"><div class="load">
+ <svg class="pan" viewBox="0 0 150 150"><circle cx="75" cy="75" r="70" fill="#FFF6EE" stroke="#C9966B" stroke-width="2"/><circle cx="75" cy="75" r="50" fill="none" stroke="#E8C4A0"/><circle cx="75" cy="75" r="28" fill="none" stroke="#B8324A"/>
+ <g font-family="serif" font-size="13" fill="#8E1B2B" text-anchor="middle" id="panTxt"></g><path d="M75 47a14 14 0 0 1 0 28a14 14 0 0 0 0 28a28 28 0 0 1 0-56" fill="#8E1B2B"/></svg>
+ <div class="lt" id="lt">排盘中…</div><p class="sub" id="ls">正在换算节气与干支</p></div>
+</section>
+
+<section class="scr" id="result">
+ <div class="rh"><div class="t" id="rt"></div><div class="s">左右滑动查看 5 张姻缘卡</div></div>
+ <div class="nav" id="dots"></div><div class="ind" id="ind"></div>
+ <div id="wrap"><div id="slides"></div></div>
+ <div class="acts"><button class="btn" id="btnImg">生成分享图</button><button class="btn ghost" id="btnRetry">再测一次</button></div>
+ <p class="disc">本结果由算法依据传统命理文化趣味生成<br>仅供娱乐，不作为任何决策依据</p>
+</section>
+
+<div class="mask" id="codeMask" aria-hidden="true"><div class="modal">
+ <button class="x" id="codeClose">×</button><h3>输入测算码</h3>
+ <p class="p" style="text-align:center;font-size:13px">每个测算码可使用 3 次<br>请输入购买后获得的 6 位码</p>
+ <input type="text" id="codeInput" maxlength="8" placeholder="XXXXXX" autocomplete="off">
+ <button class="btn" id="btnCodeOk">开始测算</button>
+</div></div>
+<div class="mask" id="ov"><div class="modal"><h3>长按图片保存</h3><img id="shareImg" alt="分享图"><div class="acts"><button class="btn" id="btnDl">下载图片</button><button class="btn ghost" id="btnClose">关闭</button></div></div></div>
+<div id="toast"></div>
+</div>
+<script src="lunar.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));scrollTo(0,0)}
+function toast(m){$('toast').textContent=m;$('toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.remove('show'),2200)}
+
+/* ===== INPUT ===== */
+const ZHI=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const ZHI_T=['23-01','01-03','03-05','05-07','07-09','09-11','11-13','13-15','15-17','17-19','19-21','21-23'];
+const inp={sex:'f',like:'auto',hour:-1,nick:''};
+(function(){const y=$('yy'),m=$('mm'),d=$('dd');for(let i=2010;i>=1960;i--)y.add(new Option(i+'年',i));y.value=1998;
+ for(let i=1;i<=12;i++)m.add(new Option(i+'月',i));const fd=()=>{const n=new Date(+y.value,+m.value,0).getDate(),k=d.value||1;d.innerHTML='';for(let i=1;i<=n;i++)d.add(new Option(i+'日',i));d.value=Math.min(k,n)};y.onchange=m.onchange=fd;fd();
+ const g=$('hourGrid');ZHI.forEach((z,i)=>{const b=document.createElement('button');b.innerHTML=z+'时<small>'+ZHI_T[i]+'</small>';b.dataset.v=i;g.appendChild(b)});
+ const b=document.createElement('button');b.innerHTML='不确定<small>按三柱</small>';b.dataset.v=-1;b.className='on';g.appendChild(b);
+ g.onclick=e=>{const t=e.target.closest('button');if(!t)return;g.querySelectorAll('button').forEach(x=>x.classList.remove('on'));t.classList.add('on');inp.hour=+t.dataset.v};
+ [['sexSeg','sex'],['likeSeg','like']].forEach(([id,k])=>$(id).onclick=e=>{const t=e.target.closest('button');if(!t)return;$(id).querySelectorAll('button').forEach(x=>x.classList.remove('on'));t.classList.add('on');inp[k]=t.dataset.v});
+})();
+
+/* ===== QUESTIONS ===== dims: w温柔 s稳重 f自由 r浪漫 z智慧 h热烈 */
+const QS=[
+['周末理想的约会是？',[['窝在家里一起做饭看电影','w'],['说走就走的短途旅行','f'],['看展、逛书店、聊到深夜','z'],['去游乐园尖叫一整天','h']]],
+['你最容易被哪种瞬间打动？',[['他记得你随口说过的小事','w'],['他认真工作时的侧脸','s'],['他为你准备的小惊喜','r'],['他讲一个很有见地的观点','z']]],
+['吵架之后你希望对方？',[['先抱抱我，道理以后再讲','w'],['冷静下来认真沟通','s'],['用一个玩笑把我逗笑','h'],['给我一点空间，自己消化','f']]],
+['你心里的「安全感」更像？',[['秒回消息，随时找得到','w'],['有规划，未来清清楚楚','s'],['彼此独立，又互相欣赏','f'],['无论多忙都会说爱你','r']]],
+['朋友眼中的你是？',[['温柔细腻的倾听者','w'],['想法很多的小疯子','h'],['靠谱的小大人','s'],['有点神秘的文艺派','r']]],
+['你更想收到哪种礼物？',[['一封手写的长信','r'],['我念叨很久的实用好物','s'],['一张去远方的机票','f'],['一本他觉得我会喜欢的书','z']]],
+['如果恋爱是一种天气，你希望是？',[['春日微风，温温柔柔','w'],['夏日骤雨，轰轰烈烈','h'],['秋日晴空，清清朗朗','z'],['冬夜初雪，安安静静','s']]],
+['你对「见家长」的态度？',[['顺其自然，水到渠成','w'],['认定了就早点定下来','s'],['不急，先好好享受恋爱','f'],['想要一个有仪式感的开始','r']]],
+['你最受不了另一半？',[['忽冷忽热、没有回应','w'],['没有上进心','s'],['控制欲太强','f'],['说话没趣、聊不到一起','z']]],
+['用一个词形容你理想的爱情？',[['细水长流','s'],['势均力敌','z'],['怦然心动','h'],['浪漫至死','r']]]];
+let ans=[],qi=0;
+function renderQ(){const q=QS[qi];$('qn').textContent=(qi+1)+' / '+QS.length;$('qp').style.width=(qi/QS.length*100)+'%';$('qback').style.visibility=qi?'visible':'hidden';
+ $('qt').textContent=q[0];$('qo').innerHTML='';q[1].forEach((o,k)=>{const b=document.createElement('button');b.className='opt'+(ans[qi]===k?' on':'');b.textContent=['A','B','C','D'][k]+'. '+o[0];b.onclick=()=>{ans[qi]=k;b.classList.add('on');setTimeout(()=>{if(qi<QS.length-1){qi++;renderQ()}else finish()},180)};$('qo').appendChild(b)})}
+
+/* ===== BAZI ===== */
+const GAN_EL={甲:'木',乙:'木',丙:'火',丁:'火',戊:'土',己:'土',庚:'金',辛:'金',壬:'水',癸:'水'};
+const ZHI_EL={子:'水',丑:'土',寅:'木',卯:'木',辰:'土',巳:'火',午:'火',未:'土',申:'金',酉:'金',戌:'土',亥:'水'};
+const ELS=['木','火','土','金','水'];const EC={木:'#3F8F5A',火:'#C8323C',土:'#A9773A',金:'#B08A2E',水:'#2E6A9E'};
+const GEN={木:'火',火:'土',土:'金',金:'水',水:'木'};const KE={木:'土',土:'水',水:'火',火:'金',金:'木'};
+const genBy=e=>ELS.find(x=>GEN[x]===e);
+function calcBazi(y,m,d,h){
+ const hr=h<0?12:(h===0?0:h*2);const ec=Solar.fromYmdHms(y,m,d,hr,30,0).getLunar().getEightChar();
+ const P=[ec.getYear(),ec.getMonth(),ec.getDay()];if(h>=0)P.push(ec.getTime());
+ const cnt={木:0,火:0,土:0,金:0,水:0};P.forEach(p=>{cnt[GAN_EL[p[0]]]++;cnt[ZHI_EL[p[1]]]++});
+ const dm=GAN_EL[P[2][0]],total=P.length*2,str=cnt[dm]+cnt[genBy(dm)];const strong=str>=total/2;
+ let xi=strong?[KE[dm],GEN[dm]]:[genBy(dm),dm];
+ const missing=ELS.filter(e=>!cnt[e]);
+ return {P,cnt,dm,dmGan:P[2][0],strong,xi,missing,total,lunar:Solar.fromYmd(y,m,d).getLunar()};
+}
+
+/* ===== ARCHETYPES ===== */
+const ARCH=[
+{id:'sun',el:'火',d:'h',name:'暖阳少年感型',m:'阳光开朗的大男孩',f:'元气满满的小太阳',kw:['热情','真诚','行动派','会逗你笑'],job:'运动/健身、市场营销、新媒体、户外行业',look:'笑起来有虎牙或酒窝，皮肤偏小麦色，穿搭清爽运动风',meet:'朋友聚会、音乐节、一起参加的兴趣活动',line:'你负责发光，他负责把你的世界点亮。',hair:0,col:'#E8734A',acc:'cap'},
+{id:'moon',el:'水',d:'w',name:'温柔守护型',m:'温柔体贴的暖男',f:'温柔细腻的姑娘',kw:['体贴','耐心','情绪稳定','细节控'],job:'医疗护理、教育、心理咨询、设计',look:'眉眼柔和，声音好听，喜欢浅色针织衫',meet:'雨天的咖啡馆、图书馆、朋友介绍',line:'有人会把你的小情绪，当成大事来对待。',hair:1,col:'#7FA6C9',acc:'none'},
+{id:'pine',el:'土',d:'s',name:'沉稳靠谱型',m:'成熟稳重的可靠先生',f:'温婉大气的知性女生',kw:['靠谱','有担当','规划感','慢热深情'],job:'金融、工程建筑、公务/国企、管理',look:'五官端正，气质干净，衬衫和手表是标配',meet:'工作场合、项目合作、长辈介绍',line:'你想要的安全感，他早就在默默准备。',hair:2,col:'#8C6A4A',acc:'watch'},
+{id:'scholar',el:'金',d:'z',name:'清冷学霸型',m:'清冷理性的学霸',f:'聪慧独立的才女',kw:['聪明','克制','有见地','反差萌'],job:'科研、IT/互联网、法律、咨询',look:'戴眼镜，偏瘦高，表面高冷熟了很话痨',meet:'课堂/培训、展览、线上兴趣社群',line:'TA的温柔不多，但全都给了你。',hair:3,col:'#6E7D8C',acc:'glasses'},
+{id:'poet',el:'木',d:'r',name:'浪漫文艺型',m:'浪漫文艺的诗意青年',f:'浪漫灵动的文艺少女',kw:['浪漫','细腻','有仪式感','懂生活'],job:'文字/出版、影视摄影、音乐、策展',look:'气质干净有书卷气，喜欢棉麻和大地色',meet:'旅行途中、书店、livehouse',line:'TA会把平凡的日子，过成一首诗。',hair:4,col:'#6F9A6A',acc:'flower'},
+{id:'wind',el:'木',d:'f',name:'自由灵魂型',m:'自由洒脱的旅行家',f:'自由酷飒的独立女孩',kw:['有趣','独立','见识广','尊重边界'],job:'创业、旅行/外贸、自由职业、艺术',look:'有点小个性，可能有耳钉或文身，笑容松弛',meet:'旅途中、异地出差、一次偶然的搭话',line:'最好的爱是：你可以做自己，而TA一直都在。',hair:5,col:'#4A8C8C',acc:'earring'},
+{id:'gold',el:'金',d:'s',name:'霸气精英型',m:'事业有成的精英',f:'飒爽干练的女强人',kw:['果断','有野心','护短','执行力强'],job:'企业管理、投资、律师、医生',look:'身材挺拔，穿搭简洁高级，眼神坚定',meet:'行业活动、商务场合、健身房',line:'TA在外雷厉风行，回家只想听你说话。',hair:6,col:'#8E1B2B',acc:'tie'},
+{id:'fire',el:'火',d:'r',name:'甜宠黏人型',m:'甜甜的黏人小奶狗',f:'可爱黏人的甜妹',kw:['甜','黏人','爱撒娇','满满的偏爱'],job:'餐饮/烘焙、宠物行业、直播、幼教',look:'圆圆的眼睛，笑起来很甜，偏爱卫衣',meet:'宠物店、甜品店、游戏或网络世界',line:'被偏爱的人，可以有恃无恐。',hair:7,col:'#E08AA0',acc:'heart'}];
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function pickArch(bz,dims,seed){
+ return ARCH.map((a,i)=>{let s=0;if(a.el===bz.xi[0])s+=4;if(a.el===bz.xi[1])s+=2;if(bz.missing.includes(a.el))s+=1.5;s+=(dims[a.d]||0)*1.6;s+=((seed>>(i*3))&7)/20;return [s,a]}).sort((x,y)=>y[0]-x[0])[0][1]}
+
+/* ===== PORTRAIT (original SVG) ===== */
+function portrait(a,g){const skin='#FBE0CF',hc=['#3A2420','#2B1B18','#1E1614','#2A2226','#5A3A28','#3B2A22','#151012','#6B4430'][a.hair];const c=a.col;
+ let back='',front='',acc='';const female=g==='f';
+ if(female){back=[`<path d="M52 92c-8 40 0 70 8 78h80c8-8 16-38 8-78z" fill="${hc}"/>`,`<path d="M50 90c-6 30-2 66 10 80h80c12-14 16-50 10-80z" fill="${hc}"/>`,`<path d="M58 92c-6 30-2 48 2 56h80c4-8 8-26 2-56z" fill="${hc}"/>`,`<path d="M54 92c-4 34 0 60 6 72h80c6-12 10-38 6-72z" fill="${hc}"/>`,`<path d="M50 92c-10 34-4 66 6 80h88c10-14 16-46 6-80z" fill="${hc}"/><circle cx="100" cy="44" r="16" fill="${hc}"/>`,`<path d="M58 92c-4 20-2 34 2 40h80c4-6 6-20 2-40z" fill="${hc}"/>`,`<path d="M56 92c-4 26-2 40 2 46h84c4-6 6-20 2-46z" fill="${hc}"/>`,`<circle cx="62" cy="62" r="16" fill="${hc}"/><circle cx="138" cy="62" r="16" fill="${hc}"/><path d="M54 92c-6 34 0 58 6 70h80c6-12 12-36 6-70z" fill="${hc}"/>`][a.hair];
+  front=`<path d="M60 92c0-34 18-48 40-48s40 14 40 48c-10-14-26-20-40-22-12 6-28 10-40 22z" fill="${hc}"/>`}
+ else{front=[`<path d="M60 90c-2-30 16-44 40-44s42 14 40 44c-8-12-20-16-28-16l-12 8-6-8c-14 0-28 6-34 16z" fill="${hc}"/>`,`<path d="M60 92c-2-32 18-46 40-46s42 14 40 46c-6-16-24-22-40-22s-34 6-40 22z" fill="${hc}"/>`,`<path d="M62 86c0-26 16-38 38-38s38 12 38 38c-6-10-18-14-38-14s-32 4-38 14z" fill="${hc}"/>`,`<path d="M60 90c0-30 18-44 40-44s40 14 40 44c-4-8-14-18-30-18-6 6-24 8-50 18z" fill="${hc}"/>`,`<path d="M58 96c-4-34 16-50 42-50s46 16 42 50c-4-14-12-20-20-22-6 8-30 10-64 22z" fill="${hc}"/><path d="M58 96c-2 14 0 24 4 30M142 96c2 14 0 24-4 30" stroke="${hc}" stroke-width="6"/>`,`<path d="M60 92c-4-32 16-46 40-46 20 0 34 8 40 22 4 10 2 18 0 24-8-14-20-18-30-14l-10-8-8 8c-14-2-26 4-32 14z" fill="${hc}"/>`,`<path d="M62 84c0-24 16-36 38-36s38 12 38 36c-10-10-24-14-38-12-6-2-28 2-38 12z" fill="${hc}"/>`,`<path d="M58 94c-4-32 18-48 42-48s44 16 42 48c-6-6-12-12-18-12-4 6-12 6-16 0-4 6-12 6-16 0-4 6-12 6-16 0-6 0-12 6-18 12z" fill="${hc}"/>`][a.hair]}
+ if(a.acc==='glasses')acc=`<g fill="none" stroke="#3A3A44" stroke-width="2.5"><circle cx="84" cy="102" r="10"/><circle cx="116" cy="102" r="10"/><path d="M94 102h12"/></g>`;
+ if(a.acc==='cap')acc=`<path d="M60 74c4-22 20-32 40-32s36 10 40 32z" fill="${c}"/><path d="M132 72h26c0 6-6 8-26 6z" fill="${c}"/>`;
+ if(a.acc==='flower')acc=`<g transform="translate(132 72)"><circle r="5" fill="#F5B7C5" cx="0" cy="-6"/><circle r="5" fill="#F5B7C5" cx="6" cy="0"/><circle r="5" fill="#F5B7C5" cx="0" cy="6"/><circle r="5" fill="#F5B7C5" cx="-6" cy="0"/><circle r="3.5" fill="#F3D27A"/></g>`;
+ if(a.acc==='earring')acc=`<circle cx="62" cy="118" r="3" fill="#E8C060"/>`;
+ if(a.acc==='heart')acc=`<path d="M136 70c0-6 8-6 8 0 0-6 8-6 8 0 0 6-8 10-8 12-0-2-8-6-8-12z" fill="#E0566F"/>`;
+ let neck=a.acc==='tie'?`<path d="M96 150l4 8 4-8 3 26-7 6-7-6z" fill="#8E1B2B"/>`:a.acc==='watch'?`<path d="M88 150l12 10 12-10" fill="none" stroke="#FFF" stroke-width="3"/>`:'';
+ const blush=`<ellipse cx="78" cy="118" rx="7" ry="4" fill="#F5A9A9" opacity=".6"/><ellipse cx="122" cy="118" rx="7" ry="4" fill="#F5A9A9" opacity=".6"/>`;
+ const eyes=female?`<path d="M78 104q6-6 12 0M110 104q6-6 12 0" stroke="#2A1A1A" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M77 101l-3-3M123 101l3-3" stroke="#2A1A1A" stroke-width="2"/>`:`<circle cx="84" cy="103" r="4.5" fill="#2A1A1A"/><circle cx="116" cy="103" r="4.5" fill="#2A1A1A"/><circle cx="85.5" cy="101.5" r="1.4" fill="#fff"/><circle cx="117.5" cy="101.5" r="1.4" fill="#fff"/>`;
+ return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="96" fill="#FBEDE3" stroke="#E8C4A0" stroke-width="3"/><circle cx="100" cy="100" r="88" fill="none" stroke="#B8324A" stroke-width="1" stroke-dasharray="3 5"/>${back}
+ <path d="M52 196c4-30 22-46 48-46s44 16 48 46z" fill="${c}"/>${neck}<rect x="92" y="132" width="16" height="20" fill="${skin}"/>
+ <ellipse cx="100" cy="104" rx="38" ry="40" fill="${skin}"/><ellipse cx="62" cy="108" rx="5" ry="8" fill="${skin}"/><ellipse cx="138" cy="108" rx="5" ry="8" fill="${skin}"/>
+ ${front}${eyes}${blush}<path d="M92 124q8 7 16 0" stroke="#B8324A" stroke-width="3" fill="none" stroke-linecap="round"/>${acc}</svg>`}
+function startArt(){return `<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"><circle cx="110" cy="110" r="100" fill="#FFF6EE" stroke="#E8C4A0" stroke-width="2"/><circle cx="110" cy="110" r="88" fill="none" stroke="#C9966B" stroke-dasharray="2 6"/>
+ <g transform="translate(18 40) scale(.45)">${portrait(ARCH[1],'f').replace(/<\/?svg[^>]*>/g,'')}</g><g transform="translate(112 40) scale(.45)">${portrait(ARCH[2],'m').replace(/<\/?svg[^>]*>/g,'')}</g>
+ <path d="M60 150c20 30 40-10 50 10s30 20 50-10" fill="none" stroke="#C8323C" stroke-width="3" stroke-linecap="round"/><path d="M104 178c0-8 12-8 12 0 0-8 12-8 12 0 0 8-12 14-12 16 0-2-12-8-12-16z" fill="#C8323C" transform="translate(-6 -12)"/>
+ <text x="110" y="205" text-anchor="middle" font-family="serif" font-size="13" fill="#8E1B2B">千里姻缘一线牵</text></svg>`}
+
+/* ===== TIMELINE ===== */
+const TAOHUA={申:'酉',子:'酉',辰:'酉',寅:'卯',午:'卯',戌:'卯',巳:'午',酉:'午',丑:'午',亥:'子',卯:'子',未:'子'};
+const LIUHE={子:'丑',丑:'子',寅:'亥',亥:'寅',卯:'戌',戌:'卯',辰:'酉',酉:'辰',巳:'申',申:'巳',午:'未',未:'午'};
+const SEASON={卯:['春季','三月前后，花开时节'],午:['夏季','五六月，热烈的盛夏'],酉:['秋季','八九月，金风玉露时'],子:['冬季','十一二月，初雪或跨年时']};
+function timeline(bz,seed){const dz=bz.P[2][1],yz=bz.P[0][1],th=TAOHUA[dz],th2=TAOHUA[yz],he=LIUHE[dz];const now=new Date().getFullYear();const L=[];
+ for(let y=now;y<now+10;y++){const gz=Lunar.fromYmd(y,6,1).getYearInGanZhi(),z=gz[1],g=gz[0];let s=0,why=[];
+  if(z===th||z===th2){s+=3;why.push('流年逢桃花')}if(z===he){s+=3;why.push('流年合日支（夫妻宫）')}if(bz.xi.includes(ZHI_EL[z])){s+=1.5;why.push('流年五行为喜用')}if(bz.xi.includes(GAN_EL[g])){s+=1;why.push('天干助运')}
+  s+=((seed>>(y%16))&3)/4;L.push({y,gz,s,why})}
+ const top=L.slice().sort((a,b)=>b.s-a.s).slice(0,3).sort((a,b)=>a.y-b.y);
+ const best=top.reduce((a,b)=>b.s>a.s?b:a);return {top,best,season:SEASON[th]}}
+
+/* ===== RESULT ===== */
+const DM_TEXT={木:'你像一棵向阳生长的树，心软又有韧劲，爱一个人会默默陪他长大。',火:'你像一团小火苗，爱憎分明、情绪真挚，喜欢就会热烈地表达。',土:'你像温厚的大地，给人踏实感，慢热但一旦认定便十分长情。',金:'你像一块温润的玉，外表冷静有原则，内心其实很渴望被坚定选择。',水:'你像一汪清泉，敏感聪慧、共情力强，恋爱里很懂对方的情绪。'};
+const DIM_ADV={w:['你需要的是「被回应」，不是「被说服」','别总委屈自己去照顾别人，你的需求也值得被优先'],s:['你看重确定感，适合细水长流的关系','偶尔放下规划，允许感情有一点意外和浪漫'],f:['你需要彼此有空间的爱，黏得太紧会让你想逃','学会说出「我在乎」，不要让对方猜'],r:['你相信仪式感，也愿意为爱付出','别用偶像剧的标准考核现实，平淡里也有糖'],z:['你欣赏能和你聊到一起的人，精神共鸣大于一切','少一点分析，多一点感受，爱情不是辩论赛'],h:['你爱得热烈直接，喜欢就会冲','吵架时先给情绪降温十分钟，再开口']};
+const QUOTES=['红线早已系好，你只需要好好爱自己，等风也等TA。','所有的晚到，都是为了让你们在最好的时候相遇。','愿你被这个世界温柔以待，也被一个人坚定选择。','山水一程，三生有幸。你的那个人，正在赶来的路上。','先成为自己的光，TA自然会循光而来。','不必着急，属于你的缘分，从不迟到。','愿有人陪你立黄昏，有人问你粥可温。','慢慢来，好的爱情值得等待。'];
+let R=null,si=0;
+function finish(){$('qp').style.width='100%';show('loading');
+ const steps=[['排盘中…','正在换算节气与干支'],['分析五行…','寻找你的喜用之神'],['推算姻缘…','翻阅月老的姻缘簿'],['绘制画像…','你的TA就要出现了']];let k=0;
+ const t=setInterval(()=>{k++;if(k<steps.length){$('lt').textContent=steps[k][0];$('ls').textContent=steps[k][1]}else{clearInterval(t);buildResult()}},800)}
+function buildResult(){
+ const y=+$('yy').value,m=+$('mm').value,d=+$('dd').value;inp.nick=$('nick').value.trim();
+ const bz=calcBazi(y,m,d,inp.hour);const dims={};ans.forEach((a,i)=>{const k=QS[i][1][a][1];dims[k]=(dims[k]||0)+1});
+ const seed=hash([y,m,d,inp.hour,inp.sex,ans.join('')].join('|'));const a=pickArch(bz,dims,seed);
+ const pg=inp.like==='auto'?(inp.sex==='f'?'m':'f'):inp.like;const tl=timeline(bz,seed);
+ const topDim=Object.entries(dims).sort((x,y)=>y[1]-x[1]||(x[0]<y[0]?-1:1))[0][0];const q=QUOTES[seed%QUOTES.length];
+ const match=86+seed%13;R={bz,a,pg,tl,topDim,q,match,y,m,d};renderResult()}
+function renderResult(){const {bz,a,pg,tl,topDim,q,match}=R;const nm=inp.nick||'你';const ta=pg==='f'?'她':'他';
+ $('rt').textContent=nm+'的姻缘簿';
+ const pl=['年柱','月柱','日柱','时柱'].map((h,i)=>{const p=bz.P[i];if(!p)return `<div class="pc"><div class="h">${h}</div><div class="g" style="color:#C9B5A8">？<br>？</div><div class="h">未知</div></div>`;
+  return `<div class="pc${i===2?' day':''}"><div class="h">${h}</div><div class="g"><span class="e${GAN_EL[p[0]]}">${p[0]}</span><br><span class="e${ZHI_EL[p[1]]}">${p[1]}</span></div><div class="h">${GAN_EL[p[0]]}${ZHI_EL[p[1]]}</div></div>`}).join('');
+ const mx=Math.max(...Object.values(bz.cnt),1);
+ const bars=ELS.map(e=>`<div class="bar"><span class="n e${e}">${e}</span><div class="tr"><div class="f" style="background:${EC[e]}" data-v="${bz.cnt[e]/mx*100}"></div></div><span class="c">${bz.cnt[e]}</span></div>`).join('');
+ const word=pg==='f'?a.f:a.m;const tlh=tl.top.map(t=>`<div class="ti"><div class="y">${t.y} ${t.gz}年 <span class="stars">${'❤'.repeat(Math.min(5,Math.max(2,Math.round(t.s))))}</span></div><div class="d">${t.why.length?t.why.join(' · '):'缘分暗涌，适合多出门'}${t===tl.best?'<br><b style="color:#B8324A">★ 最旺的一年，正缘信号最强</b>':''}</div></div>`).join('');
+ const adv=DIM_ADV[topDim];
+ $('slides').innerHTML=`
+<div class="slide"><div class="card"><div class="st"><b>01</b> · 八字排盘</div><div class="pillars">${pl}</div>
+ <p class="p" style="font-size:12px;text-align:center;margin-top:8px">公历 ${R.y}.${R.m}.${R.d} · 农历${bz.lunar.getMonthInChinese()}月${bz.lunar.getDayInChinese()} · ${inp.hour>=0?ZHI[inp.hour]+'时':'时辰未知'}</p></div>
+ <div class="card"><div class="st">五行分布</div>${bars}
+ <div class="kv"><b>日主</b><span class="e${bz.dm}">${bz.dmGan}${bz.dm}</span>（${bz.strong?'偏旺':'偏弱'}）</div><div class="kv"><b>喜用</b>${bz.xi.map(e=>`<span class="e${e}">${e}</span>`).join('、')}${bz.missing.length?'　<b>缺</b>'+bz.missing.join('、'):''}</div>
+ <p class="p">${DM_TEXT[bz.dm]}</p></div></div>
+<div class="slide"><div class="card" style="text-align:center"><div class="st"><b>02</b> · 未来伴侣画像</div><div class="por">${portrait(a,pg)}</div>
+ <div style="font-family:var(--serif);font-size:20px;color:var(--red);font-weight:700">${a.name}</div><div class="p">${word} · 缘分契合度 ${match}%</div>
+ <div class="tags" style="justify-content:center">${a.kw.map(k=>`<span class="tag">${k}</span>`).join('')}</div></div>
+ <div class="card"><div class="kv"><b>五行</b>${ta}多半带有<span class="e${a.el}">「${a.el}」</span>的气质，正好补你的喜用</div><div class="kv"><b>职业方向</b>${a.job}</div><div class="kv"><b>外貌气质</b>${a.look}</div><div class="kv"><b>相遇场景</b>${a.meet}</div></div></div>
+<div class="slide"><div class="card"><div class="st"><b>03</b> · 姻缘时间线</div><div class="tl">${tlh}</div></div>
+ <div class="card"><div class="kv"><b>桃花季节</b>${tl.season[0]} · ${tl.season[1]}</div><div class="kv"><b>正缘方位</b>${{木:'东方',火:'南方',土:'本地/中部',金:'西方',水:'北方'}[bz.xi[0]]}</div><p class="p" style="font-size:12px">依据：日支/年支桃花、流年与夫妻宫相合、流年五行喜用综合推算。</p></div></div>
+<div class="slide"><div class="card"><div class="st"><b>04</b> · 你在感情里的样子</div><p class="p">${DM_TEXT[bz.dm]}</p><p class="p" style="margin-top:8px">💗 ${adv[0]}</p></div>
+ <div class="card"><div class="st">和${ta}的相处建议</div><div class="kv"><b>①</b>${adv[1]}</div><div class="kv"><b>②</b>${ta}是「${a.kw[0]}」的人，多给${ta}正向回应，${ta}会加倍对你好</div><div class="kv"><b>③</b>桃花年里多参与「${a.meet.split('、')[0]}」这类场合，提高相遇概率</div></div></div>
+<div class="slide"><div class="card"><div class="st"><b>05</b> · 月老寄语</div><svg class="redline" width="200" height="30" viewBox="0 0 200 30"><path d="M5 15c30-20 50 20 95 0s65 20 95 0" stroke="#C8323C" stroke-width="2.5" fill="none"/></svg>
+ <div class="quote">「${q}」</div><div class="kv" style="text-align:center">${a.line}</div></div>
+ <div class="card" style="text-align:center"><p class="p">点击下方「生成分享图」<br>长按保存，发给闺蜜一起测</p></div></div>`;
+ $('dots').innerHTML='';for(let i=0;i<5;i++){const e=document.createElement('div');e.className='dot';e.onclick=()=>go(i);$('dots').appendChild(e)}
+ show('result');go(0);setTimeout(()=>document.querySelectorAll('.bar .f').forEach(e=>e.style.width=e.dataset.v+'%'),150)}
+function go(i){si=Math.max(0,Math.min(4,i));$('slides').style.transform=`translateX(-${si*100}%)`;$('ind').textContent=(si+1)+' / 5';document.querySelectorAll('.dot').forEach((d,k)=>d.classList.toggle('on',k===si))}
+(function(){let x0=0,dx=0,md=false;const w=$('wrap');
+ w.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;dx=0},{passive:true});w.addEventListener('touchmove',e=>{dx=e.touches[0].clientX-x0},{passive:true});
+ w.addEventListener('touchend',()=>{if(dx<-50)go(si+1);else if(dx>50)go(si-1)});
+ w.addEventListener('mousedown',e=>{md=true;x0=e.clientX});addEventListener('mouseup',e=>{if(!md)return;md=false;const d=e.clientX-x0;if(d<-50)go(si+1);else if(d>50)go(si-1)})})();
+
+/* ===== SHARE IMAGE ===== */
+const URL_='https://zengpenghui420-glitch.github.io/bazi-love/';
+const FONT='"Noto Serif SC","Noto Serif CJK SC","Songti SC","PingFang SC","Noto Sans CJK SC",serif';
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function wrapT(c,t,mw){const o=[];let l='';for(const ch of t){if(c.measureText(l+ch).width>mw&&l){o.push(l);l=ch}else l+=ch}if(l)o.push(l);return o}
+function loadImg(src){return new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=src})}
+async function buildShare(){const {bz,a,pg,tl,q,match}=R;const W=1080,P=72,CW=W-P*2;
+ const img=await loadImg('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(portrait(a,pg)));
+ const cv=document.createElement('canvas'),x=cv.getContext('2d');
+ function draw(d){const T=(t,tx,ty,s,col,wt,al)=>{x.font=`${wt||400} ${s}px ${FONT}`;x.fillStyle=col;x.textAlign=al||'left';x.textBaseline='top';if(d)x.fillText(t,tx,ty)};
+  const box=(y,h)=>{if(d){x.fillStyle='#FFFBF5';rr(x,P,y,CW,h,32);x.fill();x.strokeStyle='#EBD3BC';x.lineWidth=2;x.stroke()}};
+  if(d){const g=x.createLinearGradient(0,0,0,cv.height);g.addColorStop(0,'#F6DCD0');g.addColorStop(.3,'#FBF4EA');g.addColorStop(1,'#F3E2D2');x.fillStyle=g;x.fillRect(0,0,W,cv.height);x.strokeStyle='#C9966B';x.lineWidth=3;rr(x,24,24,W-48,cv.height-48,36);x.stroke()}
+  let y=90;T('— 月老红线 · 姻缘簿 —',W/2,y,32,'#C9966B',400,'center');y+=64;T((inp.nick||'我')+'的未来伴侣',W/2,y,64,'#8E1B2B',700,'center');y+=110;
+  box(y,260);['年柱','月柱','日柱','时柱'].forEach((h,i)=>{const cx=P+CW/8*(2*i+1),p=bz.P[i];T(h,cx,y+30,28,'#8C6A66',400,'center');
+   if(p){T(p[0],cx,y+80,64,EC[GAN_EL[p[0]]],700,'center');T(p[1],cx,y+160,64,EC[ZHI_EL[p[1]]],700,'center')}else T('？',cx,y+120,56,'#C9B5A8',700,'center')});y+=290;
+  box(y,250);ELS.forEach((e,i)=>{const by=y+36+i*40,mx=Math.max(...Object.values(bz.cnt),1);T(e,P+48,by-4,30,EC[e],700);if(d){x.fillStyle='#F2E2D4';rr(x,P+100,by,CW-220,20,10);x.fill();x.fillStyle=EC[e];rr(x,P+100,by,Math.max(20,(CW-220)*bz.cnt[e]/mx),20,10);x.fill()}T(String(bz.cnt[e]),P+CW-60,by-4,30,'#8C6A66')});y+=280;
+  box(y,560);if(d)x.drawImage(img,W/2-150,y+30,300,300);T(a.name,W/2,y+350,52,'#8E1B2B',700,'center');T((pg==='f'?a.f:a.m)+' · 契合度 '+match+'%',W/2,y+420,34,'#5E3A3E',400,'center');T(a.kw.join(' · '),W/2,y+480,32,'#B8324A',400,'center');y+=590;
+  box(y,200);T('桃花旺年',P+48,y+36,38,'#8E1B2B',700);T(tl.top.map(t=>t.y+t.gz).join('  ·  '),P+48,y+96,36,'#5E3A3E');T('最佳季节：'+tl.season[0],P+48,y+146,32,'#8C6A66');y+=230;
+  x.font=`500 40px ${FONT}`;const ql=wrapT(x,'「'+q+'」',CW-80);ql.forEach((l,i)=>T(l,W/2,y+i*60,40,'#8E1B2B',500,'center'));y+=ql.length*60+50;
+  T('生辰八字测姻缘 · 你的未来伴侣',W/2,y,40,'#5A2A30',700,'center');y+=64;T(URL_,W/2,y,28,'#B8324A',400,'center');y+=50;T('仅供娱乐，不作为任何决策依据',W/2,y,26,'#8C6A66',400,'center');y+=90;return y}
+ cv.width=W;cv.height=4000;const H=draw(false);cv.height=H;draw(true);return cv.toDataURL('image/png')}
+async function showShare(){try{const u=await buildShare();$('shareImg').src=u;window.__u=u;$('ov').classList.add('show')}catch(e){console.error(e);toast('生成失败，请截图分享')}}
+
+/* ===== ACCESS CODE (limited-use via MantleDB, separate collection "bz") ===== */
+const MANTLE_NS='catquiz-zph420-codes';
+const MANTLE_KEY='f60c0dae2088e5ccd5061a110aef0c0ff2a5b85f2658e78809c9123c9d82a22c';
+const COL='bz';
+const ACCESS_KEY='bazilove_unlocked';
+const isUnlocked=()=>{try{return sessionStorage.getItem(ACCESS_KEY)==='1'}catch(e){return false}};
+const setUnlocked=c=>{try{sessionStorage.setItem(ACCESS_KEY,'1');sessionStorage.setItem('bazilove_code',c)}catch(e){}};
+const normalizeCode=v=>String(v||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+function openCodeModal(){$('codeMask').classList.add('show');setTimeout(()=>$('codeInput').focus(),50)}
+function closeCodeModal(){$('codeMask').classList.remove('show')}
+function startFlow(){closeCodeModal();ans=[];qi=0;show('input')}
+async function mantleGet(code){const r=await fetch(`https://mantledb.sh/v2/${MANTLE_NS}/${COL}/${encodeURIComponent(code)}`,{headers:{'X-Mantle-Key':MANTLE_KEY}});if(r.status===404)return null;if(!r.ok)throw new Error('net '+r.status);return r.json()}
+async function mantleInc(code,by){const r=await fetch(`https://mantledb.sh/v2/increment/${MANTLE_NS}/${COL}/${encodeURIComponent(code)}`,{method:'POST',headers:{'Content-Type':'application/json','X-Mantle-Key':MANTLE_KEY},body:JSON.stringify({key:'remaining',by})});if(!r.ok)throw new Error('net '+r.status);return r.json()}
+async function redeemCode(code){const data=await mantleGet(code);if(!data||typeof data.remaining!=='number')return {ok:false,reason:'invalid'};if(data.remaining<=0)return {ok:false,reason:'exhausted'};
+ const after=await mantleInc(code,-1);const left=typeof after.remaining==='number'?after.remaining:-1;if(left<0){try{await mantleInc(code,1)}catch(e){}return {ok:false,reason:'exhausted'}}return {ok:true,remaining:left}}
+async function tryUnlock(fromUrl){const code=normalizeCode($('codeInput').value);if(!code){if(!fromUrl)toast('请输入测算码');return}
+ const btn=$('btnCodeOk');btn.disabled=true;btn.textContent='验证中…';
+ try{const res=await redeemCode(code);if(res.ok){setUnlocked(code);toast(res.remaining>0?'验证成功，还可以测 '+res.remaining+' 次':'验证成功，这是本码最后一次');startFlow();return}
+  if(!fromUrl)toast(res.reason==='exhausted'?'此测算码已用完（每个码限 3 次）':'测算码不正确')}
+ catch(e){console.error(e);if(!fromUrl)toast('网络异常，请稍后重试')}finally{btn.disabled=false;btn.textContent='开始测算'}}
+$('startArt').innerHTML=startArt();
+$('panTxt').innerHTML=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸','子','午'].map((g,i)=>{const a=i/12*Math.PI*2;return `<text x="${75+60*Math.sin(a)}" y="${80-60*Math.cos(a)}">${g}</text>`}).join('');
+$('btnStart').onclick=()=>{if(isUnlocked()){startFlow();return}openCodeModal()};
+$('btnCodeOk').onclick=()=>tryUnlock(false);$('codeInput').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock(false)});
+$('codeClose').onclick=closeCodeModal;$('codeMask').addEventListener('click',e=>{if(e.target===$('codeMask'))closeCodeModal()});
+$('btnInput').onclick=()=>{show('quiz');renderQ()};
+$('qback').onclick=()=>{if(qi>0){qi--;renderQ()}};
+$('btnRetry').onclick=()=>show('start');$('btnImg').onclick=showShare;$('btnClose').onclick=()=>$('ov').classList.remove('show');
+$('btnDl').onclick=()=>{const l=document.createElement('a');l.href=window.__u;l.download='我的未来伴侣.png';document.body.appendChild(l);l.click();l.remove()};
+(function(){try{const c=new URLSearchParams(location.search).get('code');if(c){$('codeInput').value=normalizeCode(c);if(!isUnlocked()){openCodeModal();tryUnlock(true)}}}catch(e){}})();
+</script></body></html>
