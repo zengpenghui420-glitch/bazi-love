@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>生辰八字测姻缘 · 你的未来伴侣</title>
-<meta name="description" content="输入生辰八字+10道小题，推算你的未来伴侣画像与桃花时间线。仅供娱乐。">
+<meta name="description" content="输入生辰八字+10道小题，推算正缘类型、未来伴侣画像与桃花时间线。仅供娱乐。">
 <style>
 :root{--red:#8E1B2B;--red2:#B8324A;--gold:#C9966B;--gold2:#E8C4A0;--cream:#FBF4EA;--ink:#4A2028;--muted:#8C6A66;--serif:"Noto Serif SC","Noto Serif CJK SC","Songti SC","STSong",serif;--sans:"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -70,6 +70,13 @@ input[type=text],select{width:100%;padding:11px 12px;border:1px solid #E2C7AE;bo
 .ti .y{font-family:var(--serif);color:var(--red);font-weight:700;font-size:16px}.ti .d{font-size:13px;color:#6E4A4C;line-height:1.6}
 .stars{color:var(--red2);letter-spacing:2px}
 .quote{font-family:var(--serif);font-size:19px;color:var(--red);text-align:center;line-height:1.8;padding:18px 6px}
+.zy{background:linear-gradient(180deg,#FFF8F3,#FDE8DC);border:1px solid #E7B7A8;border-radius:18px;padding:16px 16px 14px;margin:2px 0 12px;box-shadow:0 6px 16px rgba(142,27,43,.08);text-align:center}
+.zy .k{font-family:var(--serif);font-size:13px;letter-spacing:4px;color:var(--red);font-weight:700}
+.zy .n{font-family:var(--serif);font-size:28px;color:var(--red);font-weight:700;margin:6px 0 8px;letter-spacing:2px;line-height:1.3}
+.zy .p{text-align:left}
+.zytag{display:flex;align-items:center;gap:8px;background:#FFF6EE;border:1px solid #E8C4A0;border-radius:12px;padding:9px 12px;margin-bottom:10px}
+.zytag em{font-style:normal;font-family:var(--serif);font-size:14px;color:var(--red);font-weight:700}
+.zytag strong{margin-left:auto;font-family:var(--serif);color:var(--red);font-size:17px;font-weight:700}
 .acts{display:flex;gap:10px;margin-top:4px}.acts .btn{font-size:15px;padding:12px;letter-spacing:1px}
 .mask{position:fixed;inset:0;background:rgba(40,10,15,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
 .mask.show{display:flex}
@@ -90,9 +97,9 @@ input[type=text],select{width:100%;padding:11px 12px;border:1px solid #E2C7AE;bo
  <div style="height:40px"></div>
  <div style="text-align:center;font-family:var(--serif);color:var(--gold);letter-spacing:6px;font-size:13px">— 月老红线 · 姻缘簿 —</div>
  <h1>生辰八字测姻缘<br><span style="font-size:22px">你的未来伴侣</span></h1>
- <p class="sub">四柱排盘 · 五行互补 · 桃花流年</p>
+ <p class="sub">四柱排盘 · 五行喜用 · 正缘类型</p>
  <div id="startArt" style="width:220px;height:220px;margin:18px auto 0"></div>
- <div class="pills"><span class="pill">八字+10题 · 3分钟</span><span class="pill">伴侣画像</span><span class="pill">桃花时间线</span></div>
+ <div class="pills"><span class="pill">八字+10题 · 3分钟</span><span class="pill">正缘类型</span><span class="pill">伴侣画像</span><span class="pill">桃花时间线</span></div>
  <button class="btn" id="btnStart">开始测算</button>
  <p class="disc">本测试基于传统命理文化的趣味解读<br>仅供娱乐，不作为任何决策依据</p>
 </section>
@@ -124,7 +131,8 @@ input[type=text],select{width:100%;padding:11px 12px;border:1px solid #E2C7AE;bo
 </section>
 
 <section class="scr" id="result">
- <div class="rh"><div class="t" id="rt"></div><div class="s">左右滑动查看 5 张姻缘卡</div></div>
+ <div class="rh"><div class="t" id="rt"></div><div class="s" id="rs">左右滑动查看 5 张姻缘卡</div></div>
+ <div id="zyBox"></div>
  <div class="nav" id="dots"></div><div class="ind" id="ind"></div>
  <div id="wrap"><div id="slides"></div></div>
  <div class="acts"><button class="btn" id="btnImg">生成分享图</button><button class="btn ghost" id="btnRetry">再测一次</button></div>
@@ -238,23 +246,52 @@ function timeline(bz,seed){const dz=bz.P[2][1],yz=bz.P[0][1],th=TAOHUA[dz],th2=T
  const top=L.slice().sort((a,b)=>b.s-a.s).slice(0,3).sort((a,b)=>a.y-b.y);
  const best=top.reduce((a,b)=>b.s>a.s?b:a);return {top,best,season:SEASON[th]}}
 
+/* ===== 正缘类型（只看八字：日主旺弱、夫妻宫生克、喜用神） =====
+ * 1 夫妻宫同日主且身旺 → 势均力敌型
+ * 2 夫妻宫同日主且身弱 → 灵魂知己型
+ * 3 夫妻宫与日主相克且身旺 → 欢喜冤家型
+ * 4 夫妻宫克日主且身弱 → 稳重担当型
+ * 5 其余按喜用神：木生机同行 / 火治愈暖男暖女 / 土稳重担当 / 金灵魂知己 / 水温柔陪伴
+ */
+const ZY={
+ gentle:{name:'温柔陪伴型',why:(bz,c)=>{const head=c.rel==='sheng_me'?`夫妻宫${c.spouseZhi}（${c.spouseEl}）在生你的日主${bz.dmGan}${bz.dm}，你的命盘吃的是被滋养`:`日主${bz.dmGan}${bz.dm}${bz.strong?'偏旺':'偏弱'}，最喜${bz.xi.join('、')}来把节奏调顺`;return `${head}。正缘是温柔陪伴型：不急着赢你，记得住你随口提过的小事，适合把日子过成细水长流。`}},
+ steady:{name:'稳重担当型',why:(bz,c)=>{const head=c.rel==='ke_me'?`日主${bz.dmGan}${bz.dm}偏弱，夫妻宫${c.spouseZhi}（${c.spouseEl}）像一位有主见的人，你更需要被稳稳托住`:`日主${bz.dmGan}${bz.dm}${bz.strong?'偏旺':'偏弱'}，喜用落在${bz.xi.join('、')}，你更容易信赖能扛事的人`;return `${head}。正缘是稳重担当型：靠谱、有规划，不忽冷忽热，让你觉得未来可以慢慢谈。`}},
+ spark:{name:'欢喜冤家型',why:(bz,c)=>`日主${bz.dmGan}${bz.dm}偏旺，夫妻宫${c.spouseZhi}（${c.spouseEl}）和你对着来，一见面就有来有回。正缘是欢喜冤家型：拌嘴是情趣，牵手是真心，越相处越舍不得。`},
+ soul:{name:'灵魂知己型',why:(bz,c)=>{const head=c.rel==='same'?`日主${bz.dmGan}${bz.dm}偏弱，夫妻宫${c.spouseZhi}与你同属${bz.dm}，属于同气相求`:`日主${bz.dmGan}${bz.dm}${bz.strong?'偏旺':'偏弱'}，喜用为${c.xi}，你更吃精神上的懂`;return `${head}。正缘是灵魂知己型：聊得通你的沉默，也欣赏你的坚持，像认识了很久的人。`}},
+ warm:{name:pg=>pg==='f'?'治愈暖女型':'治愈暖男型',why:(bz)=>`日主${bz.dmGan}${bz.dm}${bz.strong?'偏旺':'偏弱'}，命盘最喜${bz.xi[0]}来暖场（喜用${bz.xi.join('、')}）。正缘像一小团太阳：笑点低、偏爱明显，把你的犹豫和冷清都烘得软一点。`},
+ grow:{name:'生机同行型',why:(bz)=>`日主${bz.dmGan}${bz.dm}${bz.strong?'偏旺':'偏弱'}，喜用${bz.xi.join('、')}，${bz.xi[0]}主生发，你适合和人一起长大。正缘是生机同行型：彼此打气、并肩往前，把平凡日子过成向上的样子。`},
+ match:{name:'势均力敌型',why:(bz,c)=>`日主${bz.dmGan}${bz.dm}偏旺，夫妻宫${c.spouseZhi}同属${bz.dm}，旗鼓相当。正缘是势均力敌型：不是来仰望你的，而是能和你并肩，谁也不把谁当成附属。`}
+};
+function zhengYuan(bz,pg){
+ const spouseZhi=bz.P[2][1],spouseEl=ZHI_EL[spouseZhi];
+ const rel=spouseEl===bz.dm?'same':GEN[spouseEl]===bz.dm?'sheng_me':GEN[bz.dm]===spouseEl?'i_sheng':KE[spouseEl]===bz.dm?'ke_me':'i_ke';
+ const xi=bz.xi[0];
+ let id=rel==='same'&&bz.strong?'match':rel==='same'?'soul':(rel==='ke_me'||rel==='i_ke')&&bz.strong?'spark':rel==='ke_me'?'steady':xi==='木'?'grow':xi==='火'?'warm':xi==='土'?'steady':xi==='金'?'soul':'gentle';
+ const spec=ZY[id],c={spouseZhi,spouseEl,rel,xi};
+ const name=typeof spec.name==='function'?spec.name(pg):spec.name;
+ return {id,name,why:spec.why(bz,c),rel,spouseZhi,spouseEl};
+}
+
 /* ===== RESULT ===== */
 const DM_TEXT={木:'你像一棵向阳生长的树，心软又有韧劲，爱一个人会默默陪他长大。',火:'你像一团小火苗，爱憎分明、情绪真挚，喜欢就会热烈地表达。',土:'你像温厚的大地，给人踏实感，慢热但一旦认定便十分长情。',金:'你像一块温润的玉，外表冷静有原则，内心其实很渴望被坚定选择。',水:'你像一汪清泉，敏感聪慧、共情力强，恋爱里很懂对方的情绪。'};
 const DIM_ADV={w:['你需要的是「被回应」，不是「被说服」','别总委屈自己去照顾别人，你的需求也值得被优先'],s:['你看重确定感，适合细水长流的关系','偶尔放下规划，允许感情有一点意外和浪漫'],f:['你需要彼此有空间的爱，黏得太紧会让你想逃','学会说出「我在乎」，不要让对方猜'],r:['你相信仪式感，也愿意为爱付出','别用偶像剧的标准考核现实，平淡里也有糖'],z:['你欣赏能和你聊到一起的人，精神共鸣大于一切','少一点分析，多一点感受，爱情不是辩论赛'],h:['你爱得热烈直接，喜欢就会冲','吵架时先给情绪降温十分钟，再开口']};
 const QUOTES=['红线早已系好，你只需要好好爱自己，等风也等TA。','所有的晚到，都是为了让你们在最好的时候相遇。','愿你被这个世界温柔以待，也被一个人坚定选择。','山水一程，三生有幸。你的那个人，正在赶来的路上。','先成为自己的光，TA自然会循光而来。','不必着急，属于你的缘分，从不迟到。','愿有人陪你立黄昏，有人问你粥可温。','慢慢来，好的爱情值得等待。'];
 let R=null,si=0;
 function finish(){$('qp').style.width='100%';show('loading');
- const steps=[['排盘中…','正在换算节气与干支'],['分析五行…','寻找你的喜用之神'],['推算姻缘…','翻阅月老的姻缘簿'],['绘制画像…','你的TA就要出现了']];let k=0;
+ const steps=[['排盘中…','正在换算节气与干支'],['分析五行…','按日主与喜用锁定正缘类型'],['推算姻缘…','翻阅月老的姻缘簿'],['绘制画像…','你的TA就要出现了']];let k=0;
  const t=setInterval(()=>{k++;if(k<steps.length){$('lt').textContent=steps[k][0];$('ls').textContent=steps[k][1]}else{clearInterval(t);buildResult()}},800)}
 function buildResult(){
  const y=+$('yy').value,m=+$('mm').value,d=+$('dd').value;inp.nick=$('nick').value.trim();
  const bz=calcBazi(y,m,d,inp.hour);const dims={};ans.forEach((a,i)=>{const k=QS[i][1][a][1];dims[k]=(dims[k]||0)+1});
  const seed=hash([y,m,d,inp.hour,inp.sex,ans.join('')].join('|'));const a=pickArch(bz,dims,seed);
- const pg=inp.like==='auto'?(inp.sex==='f'?'m':'f'):inp.like;const tl=timeline(bz,seed);
+ const pg=inp.like==='auto'?(inp.sex==='f'?'m':'f'):inp.like;const zy=zhengYuan(bz,pg);const tl=timeline(bz,seed);
  const topDim=Object.entries(dims).sort((x,y)=>y[1]-x[1]||(x[0]<y[0]?-1:1))[0][0];const q=QUOTES[seed%QUOTES.length];
- const match=86+seed%13;R={bz,a,pg,tl,topDim,q,match,y,m,d};renderResult()}
-function renderResult(){const {bz,a,pg,tl,topDim,q,match}=R;const nm=inp.nick||'你';const ta=pg==='f'?'她':'他';
+ const match=86+seed%13;R={bz,a,pg,tl,topDim,q,match,y,m,d,zy};renderResult()}
+function renderResult(){const {bz,a,pg,tl,topDim,q,match,zy}=R;const nm=inp.nick||'你';const ta=pg==='f'?'她':'他';
  $('rt').textContent=nm+'的姻缘簿';
+ $('rs').textContent='正缘 · '+zy.name+' · 左右滑动看 5 张卡';
+ $('zyBox').innerHTML=`<div class="zy"><div class="k">正缘类型</div><div class="n">${zy.name}</div><p class="p">${zy.why}</p></div>`;
+ const chip=`<div class="zytag"><em>正缘类型</em><strong>${zy.name}</strong></div>`;
  const pl=['年柱','月柱','日柱','时柱'].map((h,i)=>{const p=bz.P[i];if(!p)return `<div class="pc"><div class="h">${h}</div><div class="g" style="color:#C9B5A8">？<br>？</div><div class="h">未知</div></div>`;
   return `<div class="pc${i===2?' day':''}"><div class="h">${h}</div><div class="g"><span class="e${GAN_EL[p[0]]}">${p[0]}</span><br><span class="e${ZHI_EL[p[1]]}">${p[1]}</span></div><div class="h">${GAN_EL[p[0]]}${ZHI_EL[p[1]]}</div></div>`}).join('');
  const mx=Math.max(...Object.values(bz.cnt),1);
@@ -262,20 +299,21 @@ function renderResult(){const {bz,a,pg,tl,topDim,q,match}=R;const nm=inp.nick||'
  const word=pg==='f'?a.f:a.m;const tlh=tl.top.map(t=>`<div class="ti"><div class="y">${t.y} ${t.gz}年 <span class="stars">${'❤'.repeat(Math.min(5,Math.max(2,Math.round(t.s))))}</span></div><div class="d">${t.why.length?t.why.join(' · '):'缘分暗涌，适合多出门'}${t===tl.best?'<br><b style="color:#B8324A">★ 最旺的一年，正缘信号最强</b>':''}</div></div>`).join('');
  const adv=DIM_ADV[topDim];
  $('slides').innerHTML=`
-<div class="slide"><div class="card"><div class="st"><b>01</b> · 八字排盘</div><div class="pillars">${pl}</div>
+<div class="slide">${chip}<div class="card"><div class="st"><b>01</b> · 八字排盘</div><div class="pillars">${pl}</div>
  <p class="p" style="font-size:12px;text-align:center;margin-top:8px">公历 ${R.y}.${R.m}.${R.d} · 农历${bz.lunar.getMonthInChinese()}月${bz.lunar.getDayInChinese()} · ${inp.hour>=0?ZHI[inp.hour]+'时':'时辰未知'}</p></div>
  <div class="card"><div class="st">五行分布</div>${bars}
- <div class="kv"><b>日主</b><span class="e${bz.dm}">${bz.dmGan}${bz.dm}</span>（${bz.strong?'偏旺':'偏弱'}）</div><div class="kv"><b>喜用</b>${bz.xi.map(e=>`<span class="e${e}">${e}</span>`).join('、')}${bz.missing.length?'　<b>缺</b>'+bz.missing.join('、'):''}</div>
+ <div class="kv"><b>日主</b><span class="e${bz.dm}">${bz.dmGan}${bz.dm}</span>（${bz.strong?'偏旺':'偏弱'}）</div><div class="kv"><b>喜用</b>${bz.xi.map(e=>`<span class="e${e}">${e}</span>`).join('、')}${bz.missing.length?'　<b>缺</b>'+bz.missing.join('、'):''}</div><div class="kv"><b>正缘类型</b>${zy.name}</div>
  <p class="p">${DM_TEXT[bz.dm]}</p></div></div>
-<div class="slide"><div class="card" style="text-align:center"><div class="st"><b>02</b> · 未来伴侣画像</div><div class="por">${portrait(a,pg)}</div>
+<div class="slide">${chip}<div class="card" style="text-align:center"><div class="st"><b>02</b> · 未来伴侣画像</div><div class="por">${portrait(a,pg)}</div>
  <div style="font-family:var(--serif);font-size:20px;color:var(--red);font-weight:700">${a.name}</div><div class="p">${word} · 缘分契合度 ${match}%</div>
- <div class="tags" style="justify-content:center">${a.kw.map(k=>`<span class="tag">${k}</span>`).join('')}</div></div>
+ <div class="tags" style="justify-content:center">${a.kw.map(k=>`<span class="tag">${k}</span>`).join('')}</div>
+ <p class="p" style="margin-top:6px">正缘类型「${zy.name}」只看八字；上面的相处气质，掺了一点你的答题偏好。</p></div>
  <div class="card"><div class="kv"><b>五行</b>${ta}多半带有<span class="e${a.el}">「${a.el}」</span>的气质，正好补你的喜用</div><div class="kv"><b>职业方向</b>${a.job}</div><div class="kv"><b>外貌气质</b>${a.look}</div><div class="kv"><b>相遇场景</b>${a.meet}</div></div></div>
-<div class="slide"><div class="card"><div class="st"><b>03</b> · 姻缘时间线</div><div class="tl">${tlh}</div></div>
+<div class="slide">${chip}<div class="card"><div class="st"><b>03</b> · 姻缘时间线</div><div class="tl">${tlh}</div></div>
  <div class="card"><div class="kv"><b>桃花季节</b>${tl.season[0]} · ${tl.season[1]}</div><div class="kv"><b>正缘方位</b>${{木:'东方',火:'南方',土:'本地/中部',金:'西方',水:'北方'}[bz.xi[0]]}</div><p class="p" style="font-size:12px">依据：日支/年支桃花、流年与夫妻宫相合、流年五行喜用综合推算。</p></div></div>
-<div class="slide"><div class="card"><div class="st"><b>04</b> · 你在感情里的样子</div><p class="p">${DM_TEXT[bz.dm]}</p><p class="p" style="margin-top:8px">💗 ${adv[0]}</p></div>
+<div class="slide">${chip}<div class="card"><div class="st"><b>04</b> · 你在感情里的样子</div><p class="p">${DM_TEXT[bz.dm]}</p><p class="p" style="margin-top:8px">💗 ${adv[0]}</p></div>
  <div class="card"><div class="st">和${ta}的相处建议</div><div class="kv"><b>①</b>${adv[1]}</div><div class="kv"><b>②</b>${ta}是「${a.kw[0]}」的人，多给${ta}正向回应，${ta}会加倍对你好</div><div class="kv"><b>③</b>桃花年里多参与「${a.meet.split('、')[0]}」这类场合，提高相遇概率</div></div></div>
-<div class="slide"><div class="card"><div class="st"><b>05</b> · 月老寄语</div><svg class="redline" width="200" height="30" viewBox="0 0 200 30"><path d="M5 15c30-20 50 20 95 0s65 20 95 0" stroke="#C8323C" stroke-width="2.5" fill="none"/></svg>
+<div class="slide">${chip}<div class="card"><div class="st"><b>05</b> · 月老寄语</div><svg class="redline" width="200" height="30" viewBox="0 0 200 30"><path d="M5 15c30-20 50 20 95 0s65 20 95 0" stroke="#C8323C" stroke-width="2.5" fill="none"/></svg>
  <div class="quote">「${q}」</div><div class="kv" style="text-align:center">${a.line}</div></div>
  <div class="card" style="text-align:center"><p class="p">点击下方「生成分享图」<br>长按保存，发给闺蜜一起测</p></div></div>`;
  $('dots').innerHTML='';for(let i=0;i<5;i++){const e=document.createElement('div');e.className='dot';e.onclick=()=>go(i);$('dots').appendChild(e)}
@@ -292,13 +330,15 @@ const FONT='"Noto Serif SC","Noto Serif CJK SC","Songti SC","PingFang SC","Noto 
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function wrapT(c,t,mw){const o=[];let l='';for(const ch of t){if(c.measureText(l+ch).width>mw&&l){o.push(l);l=ch}else l+=ch}if(l)o.push(l);return o}
 function loadImg(src){return new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=src})}
-async function buildShare(){const {bz,a,pg,tl,q,match}=R;const W=1080,P=72,CW=W-P*2;
+async function buildShare(){const {bz,a,pg,tl,q,match,zy}=R;const W=1080,P=72,CW=W-P*2;
  const img=await loadImg('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(portrait(a,pg)));
  const cv=document.createElement('canvas'),x=cv.getContext('2d');
  function draw(d){const T=(t,tx,ty,s,col,wt,al)=>{x.font=`${wt||400} ${s}px ${FONT}`;x.fillStyle=col;x.textAlign=al||'left';x.textBaseline='top';if(d)x.fillText(t,tx,ty)};
   const box=(y,h)=>{if(d){x.fillStyle='#FFFBF5';rr(x,P,y,CW,h,32);x.fill();x.strokeStyle='#EBD3BC';x.lineWidth=2;x.stroke()}};
   if(d){const g=x.createLinearGradient(0,0,0,cv.height);g.addColorStop(0,'#F6DCD0');g.addColorStop(.3,'#FBF4EA');g.addColorStop(1,'#F3E2D2');x.fillStyle=g;x.fillRect(0,0,W,cv.height);x.strokeStyle='#C9966B';x.lineWidth=3;rr(x,24,24,W-48,cv.height-48,36);x.stroke()}
   let y=90;T('— 月老红线 · 姻缘簿 —',W/2,y,32,'#C9966B',400,'center');y+=64;T((inp.nick||'我')+'的未来伴侣',W/2,y,64,'#8E1B2B',700,'center');y+=110;
+  x.font=`400 30px ${FONT}`;const whyLines=wrapT(x,zy.why,CW-96);const zyH=136+whyLines.length*44+20;
+  box(y,zyH);T('正缘类型',W/2,y+28,30,'#C9966B',700,'center');T(zy.name,W/2,y+68,52,'#8E1B2B',700,'center');whyLines.forEach((l,i)=>T(l,W/2,y+140+i*44,30,'#5E3A3E',400,'center'));y+=zyH+30;
   box(y,260);['年柱','月柱','日柱','时柱'].forEach((h,i)=>{const cx=P+CW/8*(2*i+1),p=bz.P[i];T(h,cx,y+30,28,'#8C6A66',400,'center');
    if(p){T(p[0],cx,y+80,64,EC[GAN_EL[p[0]]],700,'center');T(p[1],cx,y+160,64,EC[ZHI_EL[p[1]]],700,'center')}else T('？',cx,y+120,56,'#C9B5A8',700,'center')});y+=290;
   box(y,250);ELS.forEach((e,i)=>{const by=y+36+i*40,mx=Math.max(...Object.values(bz.cnt),1);T(e,P+48,by-4,30,EC[e],700);if(d){x.fillStyle='#F2E2D4';rr(x,P+100,by,CW-220,20,10);x.fill();x.fillStyle=EC[e];rr(x,P+100,by,Math.max(20,(CW-220)*bz.cnt[e]/mx),20,10);x.fill()}T(String(bz.cnt[e]),P+CW-60,by-4,30,'#8C6A66')});y+=280;
