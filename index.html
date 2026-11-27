@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="preconnect" href="https://snappy-tundra-7uesdvk-zengpenghui420-glitch.vercel.app" crossorigin>
 <title>生辰八字测姻缘 · 你的未来伴侣</title>
 <meta name="description" content="输入生辰八字+10道小题，推算正缘类型、未来伴侣画像与桃花时间线。仅供娱乐。">
 <style>
@@ -353,9 +354,13 @@ async function showShare(){try{const u=await buildShare();$('shareImg').src=u;wi
 
 /* ===== UNLOCK: Xiaohongshu order id, or a Mantle access code =====
    P+18 digits → quiz-code-api (does not replace Mantle). Anything else → Mantle bz/.
-   Submit / 再测一次: POST /order/redeem (one use). Same-tab result refresh: GET /order/get
-   (no decrement). not_found on peek does not reveal the result. A timed-out redeem
-   peeks and posts again only when the use count did not go up. paidVerified is never shown. */
+   Submit / 再测一次: POST /order/redeem only (one use). The buyer is not held for a
+   peek first, and the quiz opens only when that post succeeds. Same-tab result
+   refresh: GET /order/get (no decrement). not_found on peek does not reveal the
+   result. If redeem times out, a later peek may prove the use landed (count went
+   up from 0) or that the order is still absent before one more post. An order that
+   already exists, with no earlier count, is not treated as success and is not
+   posted again. Each orderFetch aborts after ORDER_TIMEOUT_MS. paidVerified is never shown. */
 const MANTLE_NS='catquiz-zph420-codes';
 const MANTLE_KEY='f60c0dae2088e5ccd5061a110aef0c0ff2a5b85f2658e78809c9123c9d82a22c';
 const COL='bz';
@@ -365,7 +370,7 @@ const PHASE_KEY='bazilove_phase';
 const RESULT_KEY='bazilove_result';
 const API_BASE='https://snappy-tundra-7uesdvk-zengpenghui420-glitch.vercel.app';
 const QUIZ_KEY='bazi';
-const ORDER_TIMEOUT_MS=12000;
+const ORDER_TIMEOUT_MS=30000;
 const isUnlocked=()=>{try{return sessionStorage.getItem(ACCESS_KEY)==='1'}catch(e){return false}};
 const setUnlocked=c=>{try{sessionStorage.setItem(ACCESS_KEY,'1');sessionStorage.setItem('bazilove_code',c);sessionStorage.setItem(KIND_KEY,'code');sessionStorage.removeItem(PHASE_KEY);sessionStorage.removeItem(RESULT_KEY)}catch(e){}};
 function setUnlockedOrder(orderId){try{sessionStorage.setItem(ACCESS_KEY,'1');sessionStorage.setItem('bazilove_code',orderId);sessionStorage.setItem(KIND_KEY,'order');sessionStorage.setItem(PHASE_KEY,'running');sessionStorage.removeItem(RESULT_KEY)}catch(e){}}
@@ -423,7 +428,6 @@ function decideTimeout(beforeUses,after){
   if(!after.ok&&after.error&&after.error!=='not_found')return 'return';
   const afterUses=usesOf(after);
   if(after.ok&&beforeUses!=null&&afterUses!=null&&afterUses>beforeUses)return 'accept';
-  if(after.ok&&beforeUses==null)return 'accept';
   if(afterUses===0||(beforeUses!=null&&afterUses!=null&&afterUses===beforeUses))return 'retry';
   return 'giveup';
 }
@@ -497,41 +501,34 @@ function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
 async function reconcileTimeout(orderId,beforeUses){
   let after=null;
   try{after=await peekOrder(orderId)}catch(e){after=null}
-  let action=decideTimeout(beforeUses,after);
+  let baseline=beforeUses;
+  const note=()=>{if(baseline==null&&usesOf(after)===0)baseline=0};
+  note();
+  let action=decideTimeout(baseline,after);
   if(action==='retry'||action==='giveup'){
     await sleep(reconcileWaitMs());
     try{after=await peekOrder(orderId)}catch(e){}
-    const again=decideTimeout(beforeUses,after);
+    note();
+    const again=decideTimeout(baseline,after);
     if(again==='accept'||again==='return'||again==='retry')action=again;
   }
-  return {action,after};
+  return {action,after,baseline};
 }
 async function redeemOrder(orderId){
   const bad=orderFormatError(orderId);
   if(bad)return {ok:false,error:bad};
-  let beforeUses=null;
-  try{
-    const before=await peekOrder(orderId);
-    if(before&&before.ok&&(before.remaining<=0||(typeof before.max==='number'&&typeof before.uses==='number'&&before.uses>=before.max))){
-      return {ok:false,error:'exhausted',remaining:0,max:before.max||3};
-    }
-    if(before&&!before.ok&&before.error&&before.error!=='not_found')return before;
-    beforeUses=usesOf(before);
-  }catch(e){
-    if(!(e&&(e.unavailable||e.timeout)))throw e;
-  }
   async function once(){
     try{return {kind:'res',res:await postRedeem(orderId)}}
     catch(e){if(e&&e.timeout)return {kind:'timeout'};throw e}
   }
   let outcome=await once();
   if(outcome.kind==='res')return outcome.res;
-  let rec=await reconcileTimeout(orderId,beforeUses);
+  let rec=await reconcileTimeout(orderId,null);
   if(rec.action==='accept'||rec.action==='return')return rec.after;
   if(rec.action!=='retry'){const err=new Error('timeout');err.timeout=true;throw err}
   outcome=await once();
   if(outcome.kind==='res')return outcome.res;
-  rec=await reconcileTimeout(orderId,beforeUses);
+  rec=await reconcileTimeout(orderId,rec.baseline);
   if(rec.action==='accept'||rec.action==='return')return rec.after;
   const err=new Error('timeout');err.timeout=true;throw err;
 }
